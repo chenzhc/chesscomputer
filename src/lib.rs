@@ -45,10 +45,34 @@ fn test_while() {
     }
 }
 
+fn test_loop() {
+    let mut x = 1;
+    loop {
+        println!("Hello from Rust! ");
+
+        if x > 5 {
+            break;
+        }
+
+        x += 1;
+
+    }
+}
+
+fn test_for() {
+    
+}
+
 #[cfg(test)]
 mod tests {
 
     use super::*;
+
+    #[test]
+    fn it_test_loop_test() {
+        test_loop();
+
+    }
 
     #[test]
     fn it_test_while_test() {
