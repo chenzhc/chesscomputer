@@ -23,13 +23,38 @@ fn test_if() {
         println!("Wait a bit longer, you aren't old enough for a driver's license!");
     }
 
+    let drivers_license: bool = if age >= 16 { true } else { false };
+    println!("{0}", drivers_license);
 
+
+}
+
+fn test_while() {
+    let age_to_drive = 16u8;
+    let mut current_age = 0u8;
+
+    while current_age < age_to_drive {
+        println!("Waiting...{0}", current_age);
+
+        current_age+=1;
+
+        if current_age == 6 {
+            break;
+        }
+
+    }
 }
 
 #[cfg(test)]
 mod tests {
 
     use super::*;
+
+    #[test]
+    fn it_test_while_test() {
+        test_while();
+
+    }
 
     #[test]
     fn it_test_if_test() {
