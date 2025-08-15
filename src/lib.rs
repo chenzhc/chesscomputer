@@ -60,13 +60,31 @@ fn test_loop() {
 }
 
 fn test_for() {
-    
+    let ages = [14, 18, 26, 35,41];
+
+    let age_to_drive = 16i32;
+
+     for value in ages {
+        println!("The current age is: {0}", value);
+        if value >= age_to_drive {
+            println!("You are old enough to drive!");
+        } else {
+            println!("You need to wait a little bit more...");
+        }
+     }
+
 }
 
 #[cfg(test)]
 mod tests {
 
     use super::*;
+
+    #[test]
+    fn it_test_for_test() {
+        test_for();
+
+    }
 
     #[test]
     fn it_test_loop_test() {
