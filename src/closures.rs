@@ -43,9 +43,46 @@ pub fn create_scheme(conn: &Connection) -> Result<()> {
 #[cfg(test)]
 mod tests {
 
-    use rusqlite::Connection;
+    use pretty_sqlite::print_rows;
+    use rusqlite::{types::Value, Connection, ToSql};
 
     use super::*;
+
+    #[test]
+    fn it_values_test() {
+        let conn = Connection::open_in_memory().unwrap();
+
+        create_scheme(&conn).unwrap();
+
+        let names = &["Jem", "Mike", "Paul", "Pierre"];
+        for (idx, name) in names.iter().enumerate() {
+            let org_id: Option<i64> = None ;
+            conn.execute("insert into person (name, org_id, yob) values (?1, ?2,?3)", 
+                (name, &org_id, &2000)).unwrap();
+        }
+
+        let nv_list = vec![
+            ("org_id".to_string(), Value::Integer(123)),
+            ("name".to_string(), Value::Text("New name 111".to_string())),
+        ];
+
+        let (cols, vals): (Vec<String>, Vec<Value>) = nv_list.into_iter().unzip();
+        let cols = cols.iter().map(|col| format!("\"{}\" = ?", col))
+            .collect::<Vec<_>>().join(", ");
+
+        let sql = format!("update person set {cols}");
+        let mut values: Vec<&dyn ToSql>  = vals.iter().map(|x| x as &dyn ToSql).collect();
+
+        let sql = format!("{sql}  where id = ?");
+        let person_id = Value::Integer(1);
+        values.push(&person_id);
+
+        let num_of_rows = conn.execute(&sql, &*values).unwrap();
+        println!("number on rows updated: {num_of_rows}");
+
+        print_table(&conn, "person").unwrap();
+
+    }
 
     #[test]
     fn it_c02_join_test() {
@@ -53,6 +90,35 @@ mod tests {
         let _ = create_scheme(&conn);
         print_table(&conn, "org");
         print_table(&conn, "person");
+
+        let mut stmt = conn.prepare("
+            insert into org(name) values (?1) RETURNING id
+        ").unwrap();
+        let org_id = stmt.query_row(&[("ACME, Inc")],
+        |r| r.get::<_, i64>(0)).unwrap();
+
+        print_table(&conn, "org");
+        println!("org id: {0}", org_id);
+        
+        let names = &["Jem", "Mike", "Paul", "Pierre"];
+        for (idx, name) in names.iter().enumerate() {
+            let org_id = if idx % 2 == 0 { Some(org_id) } else { None };
+            conn.execute("insert into person (name, org_id, yob) values (?1, ?2,?3)", 
+                (name, &org_id, &2000)).unwrap();
+        }
+        print_table(&conn, "person");
+
+        let query = "
+            select t1.id , t1.name, t1.yob,
+                t2.name as org_name 
+            from person t1 
+            inner join org t2 on t1.org_id = t2.id 
+            where t2.id = :org_id 
+        ";
+
+        let mut stmt = conn.prepare(query).unwrap();
+        let rows = stmt.query(&[(":org_id", &org_id)]).unwrap();
+        print_rows(rows).unwrap();
 
 
     }
