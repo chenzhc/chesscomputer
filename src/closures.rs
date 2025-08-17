@@ -45,8 +45,62 @@ mod tests {
 
     use pretty_sqlite::print_rows;
     use rusqlite::{types::Value, Connection, ToSql};
+    use serde_json::json;
 
     use super::*;
+
+    #[test]
+    fn it_c04_json_test() {
+        let conn = Connection::open_in_memory().unwrap();
+
+        create_scheme(&conn).unwrap();
+
+        let data = &[("Jen", 94114), ("Mike", 94115)];
+        let mut ids: Vec<i64> = Vec::new();
+        for (name, zip ) in data {
+            let data_json = json!({
+                "address": {
+                    "city": "San Francisco",
+                    "zip": zip
+                }
+            });
+
+            let mut stmt = conn.prepare("
+                insert into person (name, yob, data_t) 
+                    values (?1, ?2, ?3) RETURNING id 
+            ").unwrap();
+
+            let person_id = stmt.query_row((name, &2000, data_json.to_string()),
+                |r| r.get::<_, i64>(0)
+                ).unwrap();
+            ids.push(person_id);
+
+            let person_1_id = ids.first().ok_or("Should have at least one person").unwrap();
+            conn.execute(
+                r#"update person set data_t = 
+                            json_set(data_t,
+                            '$.address.zip', ?2,
+                            '$.address.home_owner', json(?3)
+                            )
+                            where id = ?1
+                "#, 
+                (&person_1_id, &94222, true.to_string())).unwrap();
+
+            println!("== People owning homes: ");
+            let mut stmt = conn.prepare(
+                "select id, name, yob, data_t 
+                from person 
+                where json_extract(data_t, '$.address.home_owner') = :ho",
+            ).unwrap();
+            let rows = stmt.query(&[(":ho", &true)]).unwrap();
+            print_rows(rows).unwrap();
+        }
+
+
+        print_table(&conn, "person").unwrap();
+
+
+    }
 
     #[test]
     fn it_values_test() {
