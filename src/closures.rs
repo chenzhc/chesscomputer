@@ -1,5 +1,4 @@
 use rusqlite::Connection;
-use pretty_sqlite::print_table;
 
 pub fn test_closeures() {
     let add = || println!("Returing some text");
@@ -20,7 +19,7 @@ pub fn create_scheme(conn: &Connection) -> Result<()> {
             ) STRICT
         ", ())?;
 
-    conn.execute("DELETE FROM org", ())?;
+    // conn.execute("DELETE FROM org", ())?;
 
     conn.execute("
         CREATE TABLE IF NOT EXISTS person (
@@ -33,7 +32,7 @@ pub fn create_scheme(conn: &Connection) -> Result<()> {
         ) STRICT
     ", ())?;
 
-    conn.execute("DELETE FROM person", ())?;
+    // conn.execute("DELETE FROM person", ())?;
 
     println!("test create");
 
@@ -43,11 +42,102 @@ pub fn create_scheme(conn: &Connection) -> Result<()> {
 #[cfg(test)]
 mod tests {
 
-    use pretty_sqlite::print_rows;
+    use pretty_sqlite::{print_rows, print_table};
     use rusqlite::{types::Value, Connection, ToSql};
     use serde_json::json;
 
     use super::*;
+
+    #[tokio::test]
+    async fn it_c06_async_test() {
+        const DB_PATH: &str = "_my-db.db3";
+        let conn = Connection::open(DB_PATH).unwrap();
+
+        create_scheme(&conn).unwrap();
+
+        let names = &["Jem", "Mike"];
+
+        for name in names {
+            for i in 1..10 {
+                let name = format!("{name}-{i}");
+                let _res = tokio::task::spawn(async move {
+                    let conn = Connection::open(DB_PATH).map_err(|err| err.to_string()).unwrap();
+                    conn.execute("
+                        insert into person (name, yob) values(?1, ?2) 
+                    ", (name, &2000))
+                    .map_err(|err| err.to_string())
+                }).await.unwrap();
+            }
+        }
+
+        print_table(&conn, "person").unwrap();
+
+        
+    }
+
+
+    #[test]
+    fn it_c04_jsonb_test() {
+        let conn = Connection::open_in_memory().unwrap();
+
+        create_scheme(&conn).unwrap();
+
+        let data = &[("Jen", 94114), ("Mike", 94115)];
+        let mut ids: Vec<i64> = Vec::new();
+        for (name, zip ) in data {
+            let data_json = json!({
+                "address": {
+                    "city": "San Francisco",
+                    "zip": zip
+                }
+            });
+
+            let mut stmt = conn.prepare("
+                insert into person (name, yob, data_b) 
+                    values (?1, ?2, jsonb(?3)) RETURNING id 
+            ").unwrap();
+
+            let person_id = stmt.query_row((name, &2000, data_json.to_string()),
+                |r| r.get::<_, i64>(0)
+                ).unwrap();
+            ids.push(person_id);
+
+            let person_1_id = ids.first().ok_or("Should have at least one person").unwrap();
+            conn.execute(
+                r#"update person set data_b = 
+                            jsonb_set(data_b,
+                            '$.address.zip', ?2,
+                            '$.address.home_owner', json(?3)
+                            )
+                            where id = ?1
+                "#, 
+                (&person_1_id, &94222, true.to_string())).unwrap();
+
+            println!("== People owning homes: ");
+            let mut stmt = conn.prepare(
+                "select id, name, yob, data_b 
+                from person 
+                where data_b ->> '$.address.home_owner' = :ho",
+            ).unwrap();
+            let rows = stmt.query(&[(":ho", &true)]).unwrap();
+            print_rows(rows).unwrap();
+
+            println!("== People Not owning homes: ");
+            let mut stmt = conn.prepare(
+                "select name, yob, json(data_b) from person 
+                where jsonb_extract(data_b, '$.address.home_owner') is null 
+                    or jsonb_extract(data_b, '$.address.home_owner')  = 0 ",
+            ).unwrap();
+            let rows = stmt.query(()).unwrap();
+            print_rows(rows).unwrap();
+
+        }
+
+
+        print_table(&conn, "person").unwrap();
+
+
+    }
 
     #[test]
     fn it_c04_json_test() {
@@ -94,6 +184,16 @@ mod tests {
             ).unwrap();
             let rows = stmt.query(&[(":ho", &true)]).unwrap();
             print_rows(rows).unwrap();
+
+            println!("== People Not owning homes: ");
+            let mut stmt = conn.prepare(
+                "select * from person 
+                where json_extract(data_t, '$.address.home_owner') is null 
+                    or json_extract(data_t, '$.address.home_owner') = 0 ",
+            ).unwrap();
+            let rows = stmt.query(()).unwrap();
+            print_rows(rows).unwrap();
+
         }
 
 
@@ -109,7 +209,7 @@ mod tests {
         create_scheme(&conn).unwrap();
 
         let names = &["Jem", "Mike", "Paul", "Pierre"];
-        for (idx, name) in names.iter().enumerate() {
+        for (_idx, name) in names.iter().enumerate() {
             let org_id: Option<i64> = None ;
             conn.execute("insert into person (name, org_id, yob) values (?1, ?2,?3)", 
                 (name, &org_id, &2000)).unwrap();
@@ -142,8 +242,8 @@ mod tests {
     fn it_c02_join_test() {
         let conn = Connection::open_in_memory().unwrap();
         let _ = create_scheme(&conn);
-        print_table(&conn, "org");
-        print_table(&conn, "person");
+        print_table(&conn, "org").unwrap();
+        print_table(&conn, "person").unwrap();
 
         let mut stmt = conn.prepare("
             insert into org(name) values (?1) RETURNING id
@@ -151,7 +251,7 @@ mod tests {
         let org_id = stmt.query_row(&[("ACME, Inc")],
         |r| r.get::<_, i64>(0)).unwrap();
 
-        print_table(&conn, "org");
+        print_table(&conn, "org").unwrap();
         println!("org id: {0}", org_id);
         
         let names = &["Jem", "Mike", "Paul", "Pierre"];
@@ -160,7 +260,7 @@ mod tests {
             conn.execute("insert into person (name, org_id, yob) values (?1, ?2,?3)", 
                 (name, &org_id, &2000)).unwrap();
         }
-        print_table(&conn, "person");
+        print_table(&conn, "person").unwrap();
 
         let query = "
             select t1.id , t1.name, t1.yob,
@@ -190,12 +290,12 @@ mod tests {
                 yob INTEGER, -- year of birth
                 data BLOB
             ) STRICT
-        ", ());
+        ", ()).unwrap();
 
         conn.execute("insert into person (name, yob) values (?1, ?2)",
-             ("Jen", &2000));
+             ("Jen", &2000)).unwrap();
 
-        pretty_sqlite::print_table(&conn, "person");
+        pretty_sqlite::print_table(&conn, "person").unwrap();
         
         let select_sql = "select id, name, yob 
             from person 
@@ -204,7 +304,7 @@ mod tests {
         let mut stmt = conn.prepare(select_sql).unwrap();
         let mut rows = stmt.query(&[(":yob", &1900)]).unwrap();
 
-        pretty_sqlite::print_select(&conn, select_sql, &[(":yob", &1900)]);
+        pretty_sqlite::print_select(&conn, select_sql, &[(":yob", &1900)]).unwrap();
 
         
         while let Some(row) = rows.next().unwrap() {
