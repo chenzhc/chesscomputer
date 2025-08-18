@@ -1,6 +1,8 @@
 
 pub mod closures;
 
+pub mod generices;
+
 
 fn test_if() {
     let age_to_derive: u8 = 16u8;
