@@ -1,3 +1,4 @@
+#![allow(dead_code, unused_variables)]
 use rusqlite::Connection;
 
 pub fn test_closeures() {
@@ -39,6 +40,11 @@ pub fn create_scheme(conn: &Connection) -> Result<()> {
     return Ok(());
 }
 
+struct Person {
+    first_name: String,
+    last_name: String,
+}
+
 #[cfg(test)]
 mod tests {
 
@@ -56,7 +62,23 @@ mod tests {
         };
         let result= add(5, 100);
         println!("{result}");
-        
+        let print_result = |x: i32| println!("The result is : {}", result+x);
+        print_result(93);
+
+        let mut  p1 = Person {
+            first_name: "Trevor".to_string(),
+            last_name: "Sullivan".to_string(),
+        };
+
+        let mut  change_name = |new_last_name: &str | p1.last_name = new_last_name.to_string();
+        change_name("Jonesey");
+
+        // println!("{}", p1.last_name);
+
+        change_name("o'Sullivan");
+
+        println!("{}", p1.last_name);
+
     }
 
     #[tokio::test]
