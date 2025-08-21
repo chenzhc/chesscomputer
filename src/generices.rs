@@ -13,6 +13,7 @@ fn largest<T>(list: &[T]) -> T
     return largest;
 }
 
+#[allow(dead_code)]
 pub struct Point<T> {
     x: T,
     y: T,
@@ -24,12 +25,14 @@ impl<T> Point<T> {
     }
 }
 
+#[allow(dead_code)]
 impl Point<f32> {
     fn distance_from_origin(&self) -> f32 {
         (self.x.powi(2)  + self.y.powi(2)).sqrt()
     }
 }
 
+#[allow(dead_code)]
 struct Point2<X1, Y1> {
     x: X1,
     y: Y1,
@@ -55,7 +58,23 @@ fn longtest<'a>(x: &'a str, y: &'a str) -> &'a str {
 #[cfg(test)]
 mod tests {
 
+    use std::rc::Rc;
+
     use super::*;
+
+    #[test]
+    fn it_rc_pointer_test() {
+        let v = Rc::new(vec![
+            "odin".to_string(),
+            "Thor".to_string(),
+            "Loki".to_string(),
+        ]);
+
+        let v2 = v.clone();
+        println!("{0}, {1}", v.capacity(), v2.capacity());
+
+
+    }
 
     #[test]
     fn it_longtest_test() {

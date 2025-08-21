@@ -48,6 +48,17 @@ mod tests {
 
     use super::*;
 
+    #[test]
+    fn it_closures_test() {
+        let add  = |x: i32, y: i32 | {
+            println!("Returning some text {x} {y}");
+            x + y
+        };
+        let result= add(5, 100);
+        println!("{result}");
+        
+    }
+
     #[tokio::test]
     async fn it_c06_async_test() {
         const DB_PATH: &str = "_my-db.db3";
