@@ -4,36 +4,52 @@ use std::cell::Cell;
 
 use log::info;
 
-pub struct Person<'a> {
-    first_name: Cell<&'a str>,
+pub struct Person {
+    first_name: String,
     last_name: String,
     birth_year: u16,
     birth_month: u8,
     visited_europe: bool,
+    meters_walked: u32,
 }
 
-pub fn new_psersion() -> Person<'static> {
-    let p1 = Person {
-        first_name: Cell::from("test01"),
+impl Person {
+    fn walk_meters(&mut self, meters: u32) {
+        self.meters_walked = meters;
+    }
+}
+
+pub fn new_psersion() -> Person {
+    let mut  p1 = Person {
+        first_name: String::from("test01"),
         last_name: String::from("value"),
         birth_month: 2,
         birth_year: 2025,
         visited_europe: false,
+        meters_walked: 3,
     };
 
-    p1.first_name.set("Shannon");
+    p1.first_name = String::from("Shannon");
 
     return p1;
 }
 
 pub fn test_crate_person() {
-    let p1 = new_psersion();
-    info!("First name: {0}, last name: {1}, birth month: {2}, birth year: {3}, visisted europe: {4}",
-            p1.first_name.get(), 
-            p1.last_name,
-            p1.birth_month,
-            p1.birth_year, 
-            p1.visited_europe);
+    let mut p1 = new_psersion();
+    p1.walk_meters(30);
+
+    info!("First name: {0}, 
+    last name: {1}, 
+    birth month: {2}, 
+    birth year: {3}, 
+    visisted europe: {4} 
+    meters_walked: {5}",
+        p1.first_name, 
+        p1.last_name,
+        p1.birth_month,
+        p1.birth_year, 
+        p1.visited_europe,
+        p1.meters_walked);
 }
 
 #[derive(Debug)]
@@ -87,7 +103,7 @@ pub fn new_vehicle() -> Vehicle {
 pub fn create_vehicle() {
     // let myvehicle = new_vehicle();
     let myvehicle = Vehicle::create_vehicle();
-    
+
     info!("{:?}", myvehicle);
 
 }
@@ -134,7 +150,7 @@ mod tests {
         println!("test01");
 
         test_crate_person();
-        create_vehicle();
+        // create_vehicle();
 
     }
 }
