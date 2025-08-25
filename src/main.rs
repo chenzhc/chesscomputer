@@ -1,8 +1,19 @@
+use fast_log::Config;
+use log::{error, info, warn};
 
 pub mod helpers; 
 
+fn init() {
+    let _ = env_logger::builder()
+        .target(env_logger::Target::Stdout)
+        .filter_level(log::LevelFilter::Trace)
+        .is_test(true)
+        .try_init();
+}
 
 fn main() {
+    init();
+    fast_log::init(Config::new().console().chan_len(Some(100000))).unwrap();
     println!("Hello, world!");
     // test_func();
     let rs_name = helpers::namehelpers::get_full_name("test1", "test2");

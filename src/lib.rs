@@ -5,6 +5,17 @@ pub mod generices;
 
 pub mod match_test;
 
+pub mod optiontest;
+
+pub mod mystruct;
+
+pub fn init() {
+        let _ = env_logger::builder()
+            .target(env_logger::Target::Stdout)
+            .filter_level(log::LevelFilter::Trace)
+            .is_test(true)
+            .try_init();
+    }
 
 fn test_if() {
     let age_to_derive: u8 = 16u8;
