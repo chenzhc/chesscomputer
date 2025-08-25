@@ -1,24 +1,27 @@
 #![allow(dead_code, unused_variables)]
 
+use std::cell::Cell;
+
 use log::info;
 
-#[derive(Debug)]
-pub struct Person {
-    first_name: String,
+pub struct Person<'a> {
+    first_name: Cell<&'a str>,
     last_name: String,
     birth_year: u16,
     birth_month: u8,
     visited_europe: bool,
 }
 
-pub fn new_psersion() -> Person {
+pub fn new_psersion() -> Person<'static> {
     let p1 = Person {
-        first_name: String::from("test01"),
+        first_name: Cell::from("test01"),
         last_name: String::from("value"),
         birth_month: 2,
         birth_year: 2025,
         visited_europe: false,
     };
+
+    p1.first_name.set("Shannon");
 
     return p1;
 }
@@ -26,7 +29,7 @@ pub fn new_psersion() -> Person {
 pub fn test_crate_person() {
     let p1 = new_psersion();
     info!("First name: {0}, last name: {1}, birth month: {2}, birth year: {3}, visisted europe: {4}",
-            p1.first_name, 
+            p1.first_name.get(), 
             p1.last_name,
             p1.birth_month,
             p1.birth_year, 
@@ -51,19 +54,40 @@ pub struct Vehicle {
     color: VehicleColor,
 }
 
+impl Vehicle {
+    fn paint(&mut self, new_color: VehicleColor) {
+        self.color = new_color; 
+    }
+
+    pub fn create_vehicle() -> Vehicle {
+        let v1 = Vehicle {
+            manufacturer: "Porsche".to_string(),
+            model: String::from("911"),
+            year: 1991,
+            color: VehicleColor::Red,
+        };
+
+        return v1;
+    }
+}
+
 pub fn new_vehicle() -> Vehicle {
-    let v1 = Vehicle {
+    let mut v1 = Vehicle {
         manufacturer: "Porsche".to_string(),
         model: String::from("911"),
         year: 1991,
         color: VehicleColor::Red,
     };
 
+    v1.paint(VehicleColor::Black);
+
     return v1;
 }
 
 pub fn create_vehicle() {
-    let myvehicle = new_vehicle();
+    // let myvehicle = new_vehicle();
+    let myvehicle = Vehicle::create_vehicle();
+    
     info!("{:?}", myvehicle);
 
 }
@@ -78,6 +102,13 @@ pub fn new_vehicletuple() -> VehicleTuple {
 mod tests {
     use log::info;
     use super::*;
+
+    #[test]
+    fn it_struct_function_test() {
+        crate::init();
+        let v1 = Vehicle::create_vehicle();
+        info!("{:?}", v1);
+    }
 
     #[test]
     fn it_create_vehicle_test() {
