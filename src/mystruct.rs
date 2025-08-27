@@ -1,6 +1,4 @@
-#![allow(dead_code, unused_variables)]
-
-use std::cell::Cell;
+#![cfg_attr(debug_assertions, allow(dead_code, unused_imports, unused_variables, unused_mut))]
 
 use log::info;
 

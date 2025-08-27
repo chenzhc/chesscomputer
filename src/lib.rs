@@ -11,6 +11,8 @@ pub mod mystruct;
 
 pub mod traits_test;
 
+pub mod myverc;
+
 pub fn init() {
         let _ = env_logger::builder()
             .target(env_logger::Target::Stdout)

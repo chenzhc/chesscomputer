@@ -1,4 +1,6 @@
-#![allow(dead_code, unused_variables)]
+#![cfg_attr(debug_assertions, allow(dead_code, unused_imports, unused_variables, unused_mut))]
+#![allow(dead_code)]
+#![allow(unused_variables)]
 
 pub fn test_option_type() -> Option<u8> {
     let mut opt1: Option<u8> = None;
@@ -14,7 +16,7 @@ pub fn test_option_string() -> Option<String> {
     return opt1;
 }
 
-enum CharacterType {
+pub enum CharacterType {
     Archer,
     Warrior,
     Mage,
@@ -30,6 +32,7 @@ impl ToString for CharacterType {
     }
 }
 
+#[allow(dead_code, unused_variables)]
 pub fn test_option_chartype() -> Option<CharacterType> {
     let mut  chartype: Option<CharacterType> = None;
     chartype = Some(CharacterType::Archer);

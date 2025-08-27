@@ -1,11 +1,13 @@
-#![allow(dead_code, unused_variables)]
+#![cfg_attr(debug_assertions, allow(dead_code, unused_imports, unused_variables, unused_mut))]
+
+
 
 use std::ops::Not;
 
 use log::info;
 
 #[derive(Debug)]
-struct Person<T, U> 
+pub struct Person<T, U> 
     where T: Animal + NotDangerous,
           U: Animal + Dangerous
 {

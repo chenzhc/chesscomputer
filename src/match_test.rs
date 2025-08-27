@@ -1,4 +1,6 @@
-#![allow(dead_code, unused_variables)]
+#![cfg_attr(debug_assertions, allow(dead_code, unused_imports, unused_variables, unused_mut))]
+#![allow(dead_code)]
+#![allow(unused_variables)]
 
 #[cfg(test)] 
 mod tests {
@@ -32,6 +34,7 @@ mod tests {
     }
 
     #[test]
+    #[warn(unreachable_patterns)]
     fn it_test() {
         println!("test");
 

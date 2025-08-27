@@ -1,3 +1,4 @@
+#![cfg_attr(debug_assertions, allow(dead_code, unused_imports, unused_variables, unused_mut))]
 use fast_log::Config;
 use log::{error, info, warn};
 
