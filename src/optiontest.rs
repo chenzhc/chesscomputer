@@ -2,6 +2,7 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
 
+#[allow(unused_assignments)]
 pub fn test_option_type() -> Option<u8> {
     let mut opt1: Option<u8> = None;
     opt1 = Some(10);
@@ -9,6 +10,7 @@ pub fn test_option_type() -> Option<u8> {
     return opt1;
 }
 
+#[allow(unused_assignments)]
 pub fn test_option_string() -> Option<String> {
     let mut opt1:Option<String> = None;
     opt1 = Some(String::from("Trevor Sullivan"));
@@ -33,6 +35,7 @@ impl ToString for CharacterType {
 }
 
 #[allow(dead_code, unused_variables)]
+#[allow(unused_assignments)]
 pub fn test_option_chartype() -> Option<CharacterType> {
     let mut  chartype: Option<CharacterType> = None;
     chartype = Some(CharacterType::Archer);

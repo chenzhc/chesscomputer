@@ -34,7 +34,7 @@ mod tests {
     }
 
     #[test]
-    #[warn(unreachable_patterns)]
+    #[allow(unreachable_patterns)]
     fn it_test() {
         println!("test");
 
