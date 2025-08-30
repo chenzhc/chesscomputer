@@ -4,6 +4,7 @@
 
 use std::time::{Duration, Instant};
 
+use chrono::{NaiveDate, NaiveTime};
 use log::info;
 
 
@@ -39,6 +40,24 @@ pub fn test_chrono() {
     info!("{:?}", now);
 
     info!("{}", now.format("%Y-%m-%d %H:%M:%S"));
+
+    let date1 = NaiveDate::from_isoywd_opt(2024, 1, chrono::Weekday::Fri);
+    let unwrapped_date = date1.unwrap();
+    let mut buffer = String::new();
+    let df = unwrapped_date.format("Day of year is: %j");
+    let _ = df.write_to(&mut buffer);
+
+    info!("{:?}", buffer);
+
+    unwrapped_date.iter_days()
+        .take(4)
+        .for_each(|d| info!("{}", d.format("%j")));
+
+    let date2 = NaiveDate::from_yo_opt(2024, 366);
+    info!("{}", date2.unwrap().format("%A %B %d"));
+
+    let parse_dt = NaiveDate::parse_from_str("2025-08-30", "%Y-%m-%d");
+    info!("{}", parse_dt.ok().unwrap().format("%Y-%m-%d"));
 
 }
 
