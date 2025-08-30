@@ -19,3 +19,11 @@ chrono = "0.4.41"
 [dev-dependencies]
 pretty-sqlite = "0.3.0"
 # pretty-sqlite
+
+[[bin]]
+name = "chesscomputer"
+path = "src/main.rs"
+
+[[bin]]
+name = "chesscomputer2"
+path = "src/main2.rs"

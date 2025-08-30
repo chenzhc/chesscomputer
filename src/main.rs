@@ -4,24 +4,17 @@ use log::{error, info, warn};
 
 pub mod helpers; 
 
-fn init() {
-    let _ = env_logger::builder()
-        .target(env_logger::Target::Stdout)
-        .filter_level(log::LevelFilter::Trace)
-        .is_test(true)
-        .try_init();
-}
 
 fn main() {
-    init();
-    fast_log::init(Config::new().console().chan_len(Some(100000))).unwrap();
-    println!("Hello, world!");
+    chesscomputer::init();
+
+    info!("Hello, world!");
     // test_func();
     let rs_name = helpers::namehelpers::get_full_name("test1", "test2");
-    println!("{0}", rs_name);
+    info!("{0}", rs_name);
 
     let rs_age = helpers::private_fns::get_age_plus_5(10);
-    println!("The new age is {0}", rs_age);
+    info!("The new age is {0}", rs_age);
 
 }
 

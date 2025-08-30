@@ -1,3 +1,6 @@
+#![cfg_attr(debug_assertions, allow(dead_code, unused_imports, unused_variables, unused_mut))]
+#![allow(dead_code)]
+#![allow(unused_variables)]
 
 pub mod closures;
 
@@ -19,14 +22,16 @@ pub mod myiters;
 
 pub mod mydatetime;
 
+// init log config 
 pub fn init() {
-        let _ = env_logger::builder()
-            .target(env_logger::Target::Stdout)
-            .filter_level(log::LevelFilter::Trace)
-            .is_test(true)
-            .try_init();
-    }
+    let _ = env_logger::builder()
+        .target(env_logger::Target::Stdout)
+        .filter_level(log::LevelFilter::Trace)
+        .is_test(true)
+        .try_init();
+}
 
+#[allow(dead_code)]
 fn test_if() {
     let age_to_derive: u8 = 16u8;
     println!("{0}", age_to_derive);
