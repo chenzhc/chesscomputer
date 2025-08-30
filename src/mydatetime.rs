@@ -32,6 +32,13 @@ pub fn test_std_time() {
 }
 
 pub fn test_chrono() {
+    let now = chrono::Utc::now();
+    info!("{:?}",now);
+
+    let now = chrono::Local::now();
+    info!("{:?}", now);
+
+    info!("{}", now.format("%Y-%m-%d %H:%M:%S"));
 
 }
 
@@ -46,7 +53,7 @@ mod tests {
         crate::init();
 
         test_chrono();
-        
+
     }
 
     #[test]
