@@ -28,6 +28,8 @@ pub mod mythreads;
 
 pub mod myscopethreads;
 
+pub mod mymutex;
+
 // init log config 
 pub fn init() {
     let _ = env_logger::builder()

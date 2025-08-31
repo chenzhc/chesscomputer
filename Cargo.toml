@@ -21,6 +21,7 @@ datafusion = "49.0.2"
 pretty-sqlite = "0.3.0"
 # pretty-sqlite
 
+
 [[bin]]
 name = "chesscomputer"
 path = "src/main.rs"

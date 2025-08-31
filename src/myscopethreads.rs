@@ -1,3 +1,7 @@
+#![cfg_attr(debug_assertions, allow(dead_code, unused_imports, unused_variables, unused_mut))]
+#![allow(dead_code)]
+#![allow(unused_variables)]
+
 use std::thread;
 
 use log::info;
