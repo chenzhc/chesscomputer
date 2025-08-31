@@ -24,6 +24,8 @@ pub mod mydatetime;
 
 pub mod mydatafusion;
 
+pub mod mythreads;
+
 // init log config 
 pub fn init() {
     let _ = env_logger::builder()
