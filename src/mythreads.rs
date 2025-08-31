@@ -14,7 +14,7 @@ pub fn test_threads() {
         x += i;
     }
 
-    info!("\\x1b[38;2;100;100;255mMain thread finish a little bit of work x is:  \\1xb[0m");
+    info!("Main thread finish a little bit of work x ");
     
 }
 
@@ -25,7 +25,7 @@ pub fn spawn_thread() {
         for i in 1..50_000_000 {
             x += i;
         }
-        info!(r"\x1b[38;2;100;100;255mMain thread finish a little bit of work x is:  \1xb[0m");
+        info!("Main thread finish a little bit of work x");
     };
 
     info!("Starting new worker thread...");
@@ -58,7 +58,7 @@ mod tests {
     #[test]
     fn it_test_info_color() {
         crate::init();
-        info!("\\x1b[38;2;100;100;255mMain thread finish a little bit of work x is:  \\1xb[0m");
+        info!("Main thread finish a little bit of work ");
     }
 
     #[test]

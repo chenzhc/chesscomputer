@@ -26,6 +26,8 @@ pub mod mydatafusion;
 
 pub mod mythreads;
 
+pub mod myscopethreads;
+
 // init log config 
 pub fn init() {
     let _ = env_logger::builder()
