@@ -19,6 +19,7 @@ pub fn test_mutex() {
 
 }
 
+#[allow(unreachable_code)]
 pub fn test_mutex2() {
     let mut score = Mutex::new(0u16);
 

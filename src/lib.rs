@@ -30,6 +30,8 @@ pub mod myscopethreads;
 
 pub mod mymutex;
 
+pub mod mympsc;
+
 // init log config 
 pub fn init() {
     let _ = env_logger::builder()
