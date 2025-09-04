@@ -10,6 +10,15 @@ mod tests {
     use super::*;
 
     #[test]
+    fn it_uuid_v8_test() {
+        crate::init();
+
+        let uuid = uuid::Uuid::new_v4();
+        info!("Generated UUID is: {}", uuid.to_string());
+
+    }
+
+    #[test]
     fn it_test01() {
         crate::init();
         let fruit_list = vec!["Strawberry", "Blueberry", "Mango", "Oragne", "Apple"];

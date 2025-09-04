@@ -16,6 +16,7 @@ test-log = "0.2.18"
 env_logger = "0.11.8"
 chrono = "0.4.41"
 datafusion = "49.0.2"
+uuid = { version = "1.18.1", features = ["v6", "v7", "v8"] }
 
 [dev-dependencies]
 pretty-sqlite = "0.3.0"
